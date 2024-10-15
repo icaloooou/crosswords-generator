@@ -3,9 +3,11 @@
 import random
 import string
 
+LIFETIME = 3
 
-def make_grid(size):
-    return [[' ' for s in range(size)] for s in range(size)]
+
+def make_grid(size_r, size_c):
+    return [[' ' for s in range(size_c)] for s in range(size_r)]
 
 
 def verify_word(grid, word, row, column, direction):
@@ -51,23 +53,32 @@ def print_grid(grid):
         print(' '.join(linha))
 
  
-def make_crosswords(words, size=18):
-    grid = make_grid(size)
-    directions = ['diagonal', 'vertical', 'horizontal']
-    
-    for word in words:
-        put = False
-        while not put:
-            row = random.randint(0, size - 1)
-            column = random.randint(0, size - 1)
-            direction = random.choice(directions)
-            if verify_word(grid, word, row, column, direction):
-                insert_word(grid, word, row, column, direction)
-                put = True
-    
-    insert_random_letters(grid)
-    print_grid(grid)
+def make_crosswords(words):  
+    size_row_list = [18, 9]
+    size_column = 18
+    repetition_rows = {9: 2, 18: 3}
+
+    i = 0
+    while i < LIFETIME:
+        for r in size_row_list:
+            for _ in range(repetition_rows[r]):
+                size_row = r
+
+                grid = make_grid(size_row, size_column)
+                directions = ['diagonal', 'vertical', 'horizontal']
+                for word in words:
+                    put = False
+                    while not put:
+                        row = random.randint(0, size_row - 1)
+                        column = random.randint(0, size_column - 1)
+                        direction = random.choice(directions)
+                        if verify_word(grid, word, row, column, direction):
+                            insert_word(grid, word, row, column, direction)
+                            put = True
+                insert_random_letters(grid)
+                print_grid(grid)
+                i += 1
 
 if __name__ == '__main__':
-    words = ["PYTHON", "CHALLENGE", "ALGORITHM", "CROSSWORDS", "SEARCH"]
+    words = ["PYTHON", "CHALLENGE", "ALGORITHM", "CROSSWORD", "SEARCH"]
     make_crosswords(words)
