@@ -19,7 +19,9 @@
 ## Implementar :thought_balloon:
 1. Leitura das palavras em um banco de dados, ao invés de uma lista manual;
 2. Salvamento dos resultados em arquivos, ao invés de printar em tela;
-~~3. Geração de matrizes com dois tamanhos para criação de retangulos, ao invés de sempre ser uma matriz quadrada.~~
+3. ~~Geração de matrizes com dois tamanhos para criação de retangulos, ao invés de sempre ser uma matriz quadrada.~~
 
-## Tecnologias
-* `Python`
+## Tecnologias e bibliotecas
+- `Python`
+    - `random`
+    - `string`
