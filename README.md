@@ -21,10 +21,11 @@
 * `game`: Essa função organiza a chamada de todas as outras funções acima, gerando nossos caç-palavras.
 
 ## Implementar :thought_balloon:
-1. Leitura das palavras em um banco de dados, ao invés de uma lista manual;
+1. ~~Leitura das palavras em um banco de dados, ao invés de uma lista manual;~~
 2. ~~Salvamento dos resultados em arquivos, ao invés de printar em tela;~~
 3. ~~Geração de matrizes com dois tamanhos para criação de retangulos, ao invés de sempre ser uma matriz quadrada;~~
-4. Geração de board com streamlit para podermos "rodar" nosso gerador de caça-palavras de forma mais amigável.
+4. ~~Geração de board com streamlit para podermos "rodar" nosso gerador de caça-palavras de forma mais amigável.~~
+5. Juntar aplicação de banco de dados + streamlit.
 
 ## Tecnologias e bibliotecas
 - `Python`
