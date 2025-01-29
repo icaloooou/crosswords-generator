@@ -3,6 +3,7 @@
 import hashlib
 import requests
 import mysql.connector
+import streamlit as st
 from bs4 import BeautifulSoup
 
 import sys
@@ -73,19 +74,28 @@ def get_words(max_qty_words, number_type):
     return [d.text.strip().replace(' ', '').lower() for d in divs]
 
 
-def main(url, lifetime):
-    conn = connection(DB_CONFIG)
-    life = 0
-    while life < lifetime:
-        soup_initial = fetch_url(url)
-        max_qty_words = get_qty_words(soup_initial)
-        number_type = get_type(soup_initial)
-        words = get_words(max_qty_words, number_type)
-        put_db(conn, words)
-        life += 1
-
-    
-if __name__ == '__main__':
-    url = 'https://www.palavrasaleatorias.com'
-    lifetime = 3
-    main(url, lifetime)
+def run():
+    c1, c2 = st.columns((3, 3), gap='medium')
+    with c1:
+        qtd = st.selectbox('Quantas palavras deseja popular no banco?', range(10,60,10), index=None, placeholder="Quantidade")
+        lifetime = int(str(qtd)[0]) if qtd else 1
+        words_list = []
+        if st.button("Popular banco"):
+            url = 'https://www.palavrasaleatorias.com'
+            conn = connection(DB_CONFIG)
+            life = 0
+            while life < lifetime:
+                soup_initial = fetch_url(url)
+                max_qty_words = get_qty_words(soup_initial)
+                number_type = get_type(soup_initial)
+                words = get_words(max_qty_words, number_type)
+                for word in words:
+                    words_list.append(word)
+                put_db(conn, words)
+                life += 1
+    c1, c2 = st.columns((1, 1), gap='medium')     
+    for _ ,word_list in enumerate(words_list):
+        if _ < (qtd/2):
+            c1.write(f"{word_list.title()}, no banco.")
+        else:
+            c2.write(f"{word_list.title()}, no banco.")

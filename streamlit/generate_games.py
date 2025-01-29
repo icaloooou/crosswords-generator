@@ -3,7 +3,9 @@
 import random
 import string
 import pandas as pd
+import streamlit as st
 import mysql.connector
+from datetime import datetime
 from reportlab.lib.pagesizes import A5
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer
 from reportlab.lib import colors
@@ -12,6 +14,11 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sql.config import DB_CONFIG
+
+
+SIZE_ROW_LIST = [18, 9]
+SIZE_COLUMN = 18
+TOTAL_WORDS = {18: 15, 9: 9}
 
 def connection(db_config):
     connection = mysql.connector.connect(
@@ -160,32 +167,36 @@ def get_words_from_db(conn):
     return words
     
 
-def game():
+def game(lifetime, repetitions_rows):
     conn = connection(DB_CONFIG)
     df = get_words_from_db(conn)
     all_words_lower = df['word'].tolist()
     all_words_upper = [word.upper() for word in all_words_lower]
 
     life = 0
-    while life < LIFETIME:
+    while life < lifetime:
         for size_row in SIZE_ROW_LIST:
-            for game in range(REPETITIONS_ROWS[size_row]):
-                if size_row == 9:
-                    grid_one, words_one = make_crosswords(all_words_upper, size_row, SIZE_COLUMN)
-                    grid_two, words_two = make_crosswords(all_words_upper, size_row, SIZE_COLUMN)
-                    num_game = game + size_row
-                    save_grid_9(grid_one, grid_two, life, num_game, words_one, words_two)
-                else:
-                    grid, words = make_crosswords(all_words_upper, size_row, SIZE_COLUMN)
-                    num_game = game + size_row
-                    save_grid_18(grid, life, num_game, words)
+            if size_row == 9:
+                grid_one, words_one = make_crosswords(all_words_upper, size_row, SIZE_COLUMN)
+                grid_two, words_two = make_crosswords(all_words_upper, size_row, SIZE_COLUMN)
+                num_game = f'{size_row}_{datetime.now().strftime("%d-%m-%Y--%H-%M-%S-%f")}'
+                print('salvo 9', num_game)
+                #save_grid_9(grid_one, grid_two, life, num_game, words_one, words_two)
+            else:
+                grid, words = make_crosswords(all_words_upper, size_row, SIZE_COLUMN)
+                num_game = f'{size_row}_{datetime.now().strftime("%d-%m-%Y--%H-%M-%S-%f")}'
+                print('salvo 18', num_game)
+                #save_grid_18(grid, life, num_game, words)
         life += 1
     conn.close()
 
-if __name__ == '__main__':
-    LIFETIME = 3
-    SIZE_ROW_LIST = [18, 9]
-    SIZE_COLUMN = 18
-    REPETITIONS_ROWS = {9: 1, 18: 1}
-    TOTAL_WORDS = {18: 15, 9: 9}
-    game()
+def run():
+    c1, c2 = st.columns((3, 3), gap='medium')
+    with c1:
+        qtd_18 = st.selectbox('Quantos jogos de 18x18 quer gerar?', range(1,6), index=0)
+        qtd_9 = st.selectbox('Quantos jogos de 09x18 quer gerar?', range(1,6), index=0)
+        qtd = st.selectbox('Quantas vezes quer gerar essa quantidade?', range(1,6), index=None, placeholder="Quantidade")
+        if st.button("Gerar jogos"):
+            repetitions_rows = {9: qtd_9, 18: qtd_18}
+            lifetime = int(qtd) if qtd else 1
+            game(lifetime, repetitions_rows)
